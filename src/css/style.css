@@ -1,0 +1,91 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* height: 100%; */
+}
+ 
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
+table {
+  border-collapse: collapse;
+  height: fit-content;
+}
+
+/* ----------------------------- MAIN ----------------------------- */
+
+main {
+  height: 100%;
+  width: 80%;
+}
+
+main .gameboard-container {
+  height: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.square {
+  height: 2rem;
+  width: 2rem;
+}
+
+.gameboard {
+  border-collapse: collapse;
+  border: 1px solid rgb(138, 138, 138);
+}
+
+.gameboard-container .square {
+  position: relative;
+  border: 1px solid rgb(138, 138, 138);
+  cursor: pointer;
+}
+
+.gameboard-container .square.filled {
+  background-color: rgb(63, 63, 63);
+  border: none;
+}
+
+.gameboard .square:hover {
+  box-shadow: inset 0px 0px 0px 1px black;
+}
+
+.gameboard .square:active {
+  box-shadow: inset 0px 0px 0px 2px black;
+}
+
+.gameboard .square.hit {
+  box-shadow: inset 0px 0px 0px 1px rgb(255, 86, 86);
+  pointer-events: none;
+}
+
+.gameboard .square.drag-over {
+  background-color: rgb(87, 87, 87);
+}
+
+.ships {
+  width: 5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  flex-basis: auto;
+}
+
+.ship {
+  background-color: rgb(63, 63, 63);
+}
+
+.ship.placed {
+  position: absolute;
+  top: -.1rem;
+  /* z-index: -1; */
+}
+
+.ship .square {
+  border: none;
+}
