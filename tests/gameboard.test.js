@@ -35,21 +35,62 @@ describe('Gameboard', () => {
     test('all squares of ship works with other locations', () => {
       const Bigship = Ship(4);
       GameboardExample.placeShip(Bigship, 3, 2);
-      expect(GameboardExample.squares[2][3].shipSquare).toBe(Bigship.squares[0]);
-      expect(GameboardExample.squares[2][4].shipSquare).toBe(Bigship.squares[1]);
-      expect(GameboardExample.squares[2][5].shipSquare).toBe(Bigship.squares[2]);
-      expect(GameboardExample.squares[2][6].shipSquare).toBe(Bigship.squares[3]);
+      expect(GameboardExample.squares[3][2].shipSquare).toBe(Bigship.squares[0]);
+      expect(GameboardExample.squares[4][2].shipSquare).toBe(Bigship.squares[1]);
+      expect(GameboardExample.squares[5][2].shipSquare).toBe(Bigship.squares[2]);
+      expect(GameboardExample.squares[6][2].shipSquare).toBe(Bigship.squares[3]);
     });
 
-    test('records which ship placed in each square', () => {
-      // const Bigship = Ship(4);
-      const smallShip = Ship(1);
+    test('records all ships placed on the board', () => {
+      const Carrier = Ship(5);
+      const Battleship = Ship(5);
+      const Cruiser = Ship(3);
 
-      // GameboardExample.placeShip(Bigship, 0, 0);
-      GameboardExample.placeShip(smallShip, 5, 5);
+      const GameboardExample1 = Gameboard();
+      GameboardExample1.placeShip(Carrier, 0, 0);
+      GameboardExample1.placeShip(Battleship, 0, 2);
+      GameboardExample1.placeShip(Cruiser, 0, 4);
 
-      // expect(GameboardExample.squares[0][0].Ship).toBe(Bigship);
-      expect(GameboardExample.squares[5][5].ShipObj).toBe(smallShip);
+      const ships = [Carrier, Battleship, Cruiser];
+
+      expect(GameboardExample1.ships).toEqual(ships);
+    });
+
+    test('moves ship if already placed', () => {
+      const miniShip = Ship(1);
+
+      const GameboardExample1 = Gameboard();
+      GameboardExample1.placeShip(miniShip, 0, 0);
+      expect(GameboardExample1.squares[0][0].ShipObj).toBe(miniShip);
+      GameboardExample1.placeShip(miniShip, 0, 2);
+      expect(GameboardExample1.squares[0][0].ShipObj).toBe(null);
+      expect(GameboardExample1.squares[0][2].ShipObj).toBe(miniShip);
+      expect(GameboardExample1.ships).toEqual([miniShip]);
+    });
+
+    test('can rotate ship', () => {
+      const mediumShip = Ship(3);
+      const GameboardExample1 = Gameboard();
+
+      GameboardExample1.placeShip(mediumShip, 0, 0);
+      GameboardExample1.rotateShip(mediumShip);
+      
+      expect(GameboardExample1.squares[0][0].shipSquare).toBe(mediumShip.squares[0]);
+      expect(GameboardExample1.squares[0][1].shipSquare).toBe(mediumShip.squares[1]);
+      expect(GameboardExample1.squares[0][2].shipSquare).toBe(mediumShip.squares[2]);
+    });
+    
+    test('can rotate ship twice', () => {
+      const mediumShip = Ship(3);
+      const GameboardExample1 = Gameboard();
+      
+      GameboardExample1.placeShip(mediumShip, 0, 0);
+      GameboardExample1.rotateShip(mediumShip);
+      GameboardExample1.rotateShip(mediumShip);
+      
+      expect(GameboardExample1.squares[0][0].shipSquare).toBe(mediumShip.squares[0]);
+      expect(GameboardExample1.squares[1][0].shipSquare).toBe(mediumShip.squares[1]);
+      expect(GameboardExample1.squares[2][0].shipSquare).toBe(mediumShip.squares[2]);
     });
   });
 
@@ -74,16 +115,69 @@ describe('Gameboard', () => {
     });
 
     test('Reports if all ships are sunk', () => {
-      GameboardExample.placeShip(Ship(1), 0, 0);
-      GameboardExample.placeShip(Ship(1), 5, 5);
-      GameboardExample.placeShip(Ship(2), 8, 9);
+      const smallShip1 = Ship(1);
+      const smallShip2 = Ship(1);
+      const mediumShip = Ship(2);
+      
+      const GameboardExample1 = Gameboard();
+      GameboardExample1.placeShip(smallShip1, 0, 0);
+      GameboardExample1.placeShip(smallShip2, 0, 2);
+      GameboardExample1.placeShip(mediumShip, 0, 4);
 
-      GameboardExample.recieveAttack(0, 0);
-      GameboardExample.recieveAttack(5, 5);
-      GameboardExample.recieveAttack(8, 9);
-      GameboardExample.recieveAttack(9, 9);
+      GameboardExample1.recieveAttack(0, 0);
+      GameboardExample1.recieveAttack(0, 2);
+      GameboardExample1.recieveAttack(0, 4);
+      GameboardExample1.recieveAttack(1, 4);
 
-      expect(GameboardExample.allSunk()).toBeTruthy();
+      expect(GameboardExample1.allSunk).toBeTruthy();
+    });
+
+    test('Does not return true if ships are not sunk', () => {
+      const smallShip1 = Ship(1);
+      const smallShip2 = Ship(1);
+      const mediumShip = Ship(2);
+
+      const GameboardExample1 = Gameboard();
+      GameboardExample1.placeShip(smallShip1, 0, 0);
+      GameboardExample1.placeShip(smallShip2, 0, 2);
+      GameboardExample1.placeShip(mediumShip, 0, 4);
+
+      GameboardExample1.recieveAttack(0, 0);
+      GameboardExample1.recieveAttack(0, 2);
+      GameboardExample1.recieveAttack(0, 4);
+
+      expect(GameboardExample1.allSunk()).toBeFalsy();
+    });
+  });
+
+  describe('removeShip', () => { // if tests break, delete them
+    test('can remove a 1 block ship', () => {
+      const miniShip = Ship(1);
+
+      const GameboardExample1 = Gameboard();
+      GameboardExample1.placeShip(miniShip, 0, 0);
+      
+      GameboardExample1.removeShip(0, 0, miniShip);
+      expect(GameboardExample1.squares[0][0].ShipObj).toBe(null);
+      expect(GameboardExample1.squares[0][0].shipSquare).toBe(null);
+      expect(GameboardExample1.ships).toEqual([]);
+    });
+
+    test('can remove bigger ships', () => {
+      const bigShip = Ship(4);
+
+      const GameboardExample1 = Gameboard();
+      GameboardExample1.placeShip(bigShip, 0, 0);
+
+      GameboardExample1.removeShip(0, 0);
+      expect(GameboardExample1.squares[0][0].ShipObj).toBe(null);
+      expect(GameboardExample1.squares[0][0].shipSquare).toBe(null);
+      expect(GameboardExample1.squares[1][0].ShipObj).toBe(null);
+      expect(GameboardExample1.squares[1][0].shipSquare).toBe(null);
+      expect(GameboardExample1.squares[2][0].ShipObj).toBe(null);
+      expect(GameboardExample1.squares[2][0].shipSquare).toBe(null);
+      expect(GameboardExample1.squares[3][0].ShipObj).toBe(null);
+      expect(GameboardExample1.squares[3][0].shipSquare).toBe(null);
     });
   });
 });

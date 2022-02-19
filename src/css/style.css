@@ -82,8 +82,17 @@ main .gameboard-container {
 
 .ship.placed {
   position: absolute;
-  top: -.1rem;
+  top: -.037rem;
   /* z-index: -1; */
+}
+
+.ship.horizontal {
+  /* transform: rotate(-90deg);
+  transform-origin: top right;
+  left: -2rem;
+  top: 0rem; */
+  display: flex;
+  
 }
 
 .ship .square {

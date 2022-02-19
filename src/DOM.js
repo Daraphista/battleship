@@ -75,12 +75,13 @@ const DOM = (() => {
       return result;
     });
   };
-  const handleDragAndDrop = () => {
+  const handleDragAndDrop = (parentSelector) => {
     const shipElements = Array.from(document.querySelectorAll('.ship'));
+    const squareElements = Array.from(document.querySelectorAll('.gameboard .square'));
     shipElements.forEach(shipElement => {
       shipElement.draggable = 'true';
       shipElement.addEventListener('dragstart', e => {
-        const selector = `.${shipElement.parentElement.classList[1]} #${shipElement.id}`;
+        const selector = `${parentSelector} #${shipElement.id}`;
         e.dataTransfer.setData('text', selector);
         e.currentTarget.style.opacity = '0.4';
       });
@@ -89,7 +90,6 @@ const DOM = (() => {
       });
     });
 
-    const squareElements = Array.from(document.querySelectorAll('.gameboard .square'));
     squareElements.forEach(squareElement => {
       squareElement.addEventListener('dragover', e => {
         e.target.classList.add('drag-over');
@@ -111,14 +111,33 @@ const DOM = (() => {
         const shipLength = Number(ship.dataset.length);
         const shipPosition = Number(squareElement.dataset.x);
         
-        if (shipFits(shipLength, shipPosition) && noShipNearby(ship, x, y)) { // vertically
+        if (shipFits(shipLength, shipPosition) 
+        && noShipNearby(ship, x, y) 
+        // && !ship.classList.contains('horizontal')
+        ) { // vertically
           e.target.appendChild(ship);
           ship.classList.add('placed');
           const {shipObj} = ship;
           gameboardObj.placeShip(shipObj, x, y);
-          displayShipsOnGameboard(squareElements);
+        }        
+        
+      });
+    });
+  };
+  const handleShipRotations = (gameboardObj) => {
+    const shipElements = Array.from(document.querySelectorAll('.ship'));
+    shipElements.forEach(shipElement => {
+      shipElement.addEventListener('click', () => {
+        const {shipObj} = shipElement;
+        const shipLength = Number(shipObj.shipLength);
+        const shipPosition = Number(shipElement.parentElement.dataset.y);
+
+        if(shipFits(shipLength, shipPosition)) {
+          shipElement.classList.toggle('horizontal');
+          gameboardObj.rotateShip(shipObj);
         }
         
+        console.log(gameboardObj.squares);
       });
     });
   };
@@ -127,11 +146,13 @@ const DOM = (() => {
     loadGameBoard(GameboardObj2, '.gameboard.player2');
 
     displayShips(ships1, '.ships.player1');
-    handleDragAndDrop();
+    handleDragAndDrop('.player1');
+    handleShipRotations(GameboardObj1);
 
-    clickAttacks();
+    // clickAttacks();
   };
 
   return { load };
 })();
+
 export default DOM;
