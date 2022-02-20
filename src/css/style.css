@@ -78,6 +78,7 @@ main .gameboard-container {
 
 .ship {
   background-color: rgb(63, 63, 63);
+  height: fit-content;
 }
 
 .ship.placed {
@@ -92,7 +93,7 @@ main .gameboard-container {
   left: -2rem;
   top: 0rem; */
   display: flex;
-  
+
 }
 
 .ship .square {

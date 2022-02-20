@@ -63,12 +63,15 @@ describe('Gameboard', () => {
       GameboardExample1.placeShip(miniShip, 0, 0);
       expect(GameboardExample1.squares[0][0].ShipObj).toBe(miniShip);
       GameboardExample1.placeShip(miniShip, 0, 2);
+
       expect(GameboardExample1.squares[0][0].ShipObj).toBe(null);
       expect(GameboardExample1.squares[0][2].ShipObj).toBe(miniShip);
       expect(GameboardExample1.ships).toEqual([miniShip]);
     });
-
-    test('can rotate ship', () => {
+  });
+  
+  describe('rotateShip', () => {
+    test ('can rotate ship', () => {
       const mediumShip = Ship(3);
       const GameboardExample1 = Gameboard();
 
@@ -78,6 +81,26 @@ describe('Gameboard', () => {
       expect(GameboardExample1.squares[0][0].shipSquare).toBe(mediumShip.squares[0]);
       expect(GameboardExample1.squares[0][1].shipSquare).toBe(mediumShip.squares[1]);
       expect(GameboardExample1.squares[0][2].shipSquare).toBe(mediumShip.squares[2]);
+
+      expect(GameboardExample1.squares[1][0].shipSquare).not.toBe(mediumShip.squares[1]);
+      expect(GameboardExample1.squares[2][0].shipSquare).not.toBe(mediumShip.squares[2]);
+    });
+
+    test('can rotate bigger ship', () => {
+      const bigShip = Ship(4);
+      const GameboardExample1 = Gameboard();
+
+      GameboardExample1.placeShip(bigShip, 3, 2);
+      GameboardExample1.rotateShip(bigShip);
+
+      expect(GameboardExample1.squares[3][2].shipSquare).toBe(bigShip.squares[0]);
+      expect(GameboardExample1.squares[3][3].shipSquare).toBe(bigShip.squares[1]);
+      expect(GameboardExample1.squares[3][4].shipSquare).toBe(bigShip.squares[2]);
+      expect(GameboardExample1.squares[3][5].shipSquare).toBe(bigShip.squares[3]);
+
+      expect(GameboardExample1.squares[4][2].shipSquare).toBe(null);
+      expect(GameboardExample1.squares[5][2].shipSquare).toBe(null);
+      expect(GameboardExample1.squares[6][2].shipSquare).toBe(null);
     });
     
     test('can rotate ship twice', () => {
@@ -91,6 +114,9 @@ describe('Gameboard', () => {
       expect(GameboardExample1.squares[0][0].shipSquare).toBe(mediumShip.squares[0]);
       expect(GameboardExample1.squares[1][0].shipSquare).toBe(mediumShip.squares[1]);
       expect(GameboardExample1.squares[2][0].shipSquare).toBe(mediumShip.squares[2]);
+
+      expect(GameboardExample1.squares[0][1].shipSquare).not.toBe(mediumShip.squares[1]);
+      expect(GameboardExample1.squares[0][2].shipSquare).not.toBe(mediumShip.squares[2]);
     });
   });
 

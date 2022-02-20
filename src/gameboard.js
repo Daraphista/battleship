@@ -29,13 +29,20 @@ const Gameboard = () => {
     const {shipLength} = ShipObj;
     ships.splice(ships.indexOf(Ship), 1);
 
-    let squareIndex = x;
-    while ( squareIndex < shipLength ) {
-      squares[squareIndex][y].ShipObj = null;
-      squares[squareIndex][y].shipSquare = null;
-      squareIndex += 1;
+    const squareIndex = x;
+    let index = 1;
+    while (index <= shipLength) {
+      if(ShipObj.rotation === 'vertical') {
+        squares[squareIndex + index][y].shipSquare = null;
+        squares[squareIndex + index][y].ShipObj = null;
+      } else if(ShipObj.rotation === 'horizontal') {
+        squares[x][squareIndex + index].shipSquare = null;
+        squares[x][squareIndex + index].ShipObj = null;
+      }
+      index += 1;
     }
-
+    
+    squares[x][y].shipSquare = null;
     squares[x][y].ShipObj = null;
   };
 
@@ -54,7 +61,7 @@ const Gameboard = () => {
     }
 
     if(ships.includes(Ship)) {
-      removeShip(Ship.x, Ship.y, Ship);
+      // removeShip(Ship.x, Ship.y, Ship);
     }
 
     const locationState = {x, y};
@@ -68,20 +75,21 @@ const Gameboard = () => {
 
     removeShip(x, y, Ship);
 
+    
     if(Ship.rotation === 'vertical') {
-      let index = 0;
-      let squareIndex = x;
-      while (index < Ship.shipLength) {
-        squares[x][squareIndex].shipSquare = Ship.squares[index];
-        squares[x][squareIndex].ShipObj = Ship;
-        squareIndex += 1;
+      squares[x][y].shipSquare = Ship.squares[0];
+      squares[x][y].ShipObj = Ship;
+  
+      let index = 1;
+      while (index <= Ship.shipLength) {
+        squares[x][y + index].shipSquare = Ship.squares[index];
+        squares[x][y + index].ShipObj = Ship;
         index += 1;
       }
 
       const locationState = {x, y};
       const rotationState = {rotation: 'horizontal'};
       ships.push(Object.assign(Ship, locationState, rotationState));
-      
     } else if(Ship.rotation === 'horizontal') {
       placeShip(Ship, x, y);
     }

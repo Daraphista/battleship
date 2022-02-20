@@ -34,18 +34,16 @@ const DOM = (() => {
   const displayShips = (ships, elementSelector) => {
     const container = document.querySelector(elementSelector);
     Object.keys(ships).forEach(key => {
-      const table = document.createElement('table');
-      container.appendChild(table);
-      table.classList.add('ship');
-      table.dataset.length = ships[key].shipLength;
-      table.id = key.toLowerCase();
-      table.shipObj = ships[key];
+      const div = document.createElement('div');
+      container.appendChild(div);
+      div.classList.add('ship');
+      div.dataset.length = ships[key].shipLength;
+      div.id = key.toLowerCase();
+      div.shipObj = ships[key];
       
       ships[key].squares.forEach(() => {
-        const shipRow = document.createElement('tr');
-        table.appendChild(shipRow);
-        const shipSquare = document.createElement('th');
-        shipRow.appendChild(shipSquare);
+        const shipSquare = document.createElement('div');
+        div.appendChild(shipSquare);
         shipSquare.classList.add('square');
       });
     });
@@ -109,11 +107,15 @@ const DOM = (() => {
         const y = Number(squareElement.dataset.y);
         
         const shipLength = Number(ship.dataset.length);
-        const shipPosition = Number(squareElement.dataset.x);
+        const shipPositionX = Number(squareElement.dataset.x);
+        const shipPositionY = Number(squareElement.dataset.y);
         
-        if (shipFits(shipLength, shipPosition) 
+        if (shipFits(shipLength, shipPositionX) 
         && noShipNearby(ship, x, y) 
-        // && !ship.classList.contains('horizontal')
+        && !ship.classList.contains('horizontal')
+        || shipFits(shipLength, shipPositionY)
+        && noShipNearby(ship, x, y)
+        && ship.classList.contains('horizontal')
         ) { // vertically
           e.target.appendChild(ship);
           ship.classList.add('placed');
@@ -130,9 +132,10 @@ const DOM = (() => {
       shipElement.addEventListener('click', () => {
         const {shipObj} = shipElement;
         const shipLength = Number(shipObj.shipLength);
-        const shipPosition = Number(shipElement.parentElement.dataset.y);
+        const shipPositionY = Number(shipElement.parentElement.dataset.y);
+        const shipPositionX = Number(shipElement.parentElement.dataset.x);
 
-        if(shipFits(shipLength, shipPosition)) {
+        if(shipFits(shipLength, shipPositionY) && shipFits(shipLength, shipPositionX)) {
           shipElement.classList.toggle('horizontal');
           gameboardObj.rotateShip(shipObj);
         }
